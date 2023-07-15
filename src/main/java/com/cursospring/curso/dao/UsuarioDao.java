@@ -1,4 +1,11 @@
 package com.cursospring.curso.dao;
 
-public class UsuarioDao {
+import com.cursospring.curso.models.Usuario;
+
+import java.util.List;
+
+public interface UsuarioDao {
+
+    List<Usuario> getUsuarios();
+
 }
