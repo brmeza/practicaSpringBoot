@@ -10,4 +10,7 @@ public interface UsuarioDao {
 
     List<Usuario> getUsuarios();
 
+    void registrar(Usuario usuario);
+
+    boolean verificarCredenciales(Usuario usuario);
 }

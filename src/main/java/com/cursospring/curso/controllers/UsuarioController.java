@@ -2,11 +2,10 @@ package com.cursospring.curso.controllers;
 
 import com.cursospring.curso.dao.UsuarioDao;
 import com.cursospring.curso.models.Usuario;
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,30 +15,16 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioDao usuarioDao;
-    @RequestMapping(value = "api/usuarios")
+    @RequestMapping(value = "api/usuarios", method = RequestMethod.GET)
     public List<Usuario> getUsuario(){
         return usuarioDao.getUsuarios();
     }
-    @RequestMapping(value = "api/usuarios/{id}", method = RequestMethod.GET)
-    public Usuario getUsuario(@PathVariable Long id){
-        Usuario usuario = new Usuario();
-        usuario.setId(id);
-        usuario.setNombre("fabian");
-        usuario.setApellido("meza");
-        usuario.setEmail("fmeza@gmail.com");
-        usuario.setTelefono("3221233232");
-        return usuario;
-    }
-
-
-    @RequestMapping(value = "usuarioED")
-    public Usuario editar(){
-        Usuario usuario = new Usuario();
-        usuario.setNombre("fabian");
-        usuario.setApellido("meza");
-        usuario.setEmail("fmeza@gmail.com");
-        usuario.setTelefono("3221233232");
-        return usuario;
+    @RequestMapping(value = "api/usuarios", method = RequestMethod.POST)
+    public void registrarUsuario(@RequestBody Usuario usuario){
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
+        String hash = argon2.hash(1,1024,1, usuario.getPassword());
+        usuario.setPassword(hash);
+        usuarioDao.registrar(usuario);
     }
 
     @RequestMapping(value = "api/usuarios/{id}", method = RequestMethod.DELETE)
@@ -47,14 +32,5 @@ public class UsuarioController {
         usuarioDao.eliminar(id); // Utiliza la instancia usuarioDao para llamar al método eliminar
     }
 
-    @RequestMapping(value = "usuarioB")
-    public Usuario buscar(){
-        Usuario usuario = new Usuario();
-        usuario.setNombre("fabian");
-        usuario.setApellido("meza");
-        usuario.setEmail("fmeza@gmail.com");
-        usuario.setTelefono("3221233232");
-        return usuario;
-    }
 
 }
